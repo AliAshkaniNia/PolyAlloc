@@ -23,7 +23,7 @@ list( APPEND TEST_TARGETS tests_monotonic tests_utility )
 include(GoogleTest)
 
 foreach(target ${TEST_TARGETS})
-    target_compile_features(${target} PRIVATE cxx_std_17)
+    target_compile_features(${target} PRIVATE cxx_std_20)
     set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
 
     target_include_directories(${target} PRIVATE ../include)
