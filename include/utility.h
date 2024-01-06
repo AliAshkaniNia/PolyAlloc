@@ -10,6 +10,12 @@
 namespace util
 {
 
+    // Aligns the size to the nearest multiple of the alignment
+    constexpr auto align(std::size_t size, std::size_t alignment) -> std::size_t
+    {
+        return (size + alignment - 1) & ~(alignment - 1);
+    }
+
     template <size_t X>
     void printArrayContents(std::string_view title,  std::array<std::byte, X>& data) {
         constexpr size_t numbers_per_line = 16;

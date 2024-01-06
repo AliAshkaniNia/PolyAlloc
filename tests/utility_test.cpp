@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
+#include "utility.h"
 
-// Define a test case
-TEST(HelloWorldTest, BasicAssertion) {
-    // Replace this assertion with the actual condition you want to test
-    ASSERT_TRUE(true);
+TEST(UtilityTest, AlignsProperly) {
 
-    // You can use other assertions like ASSERT_EQ, ASSERT_NE, etc.
-    // For example:
-    // ASSERT_EQ(2 + 2, 4);
+    EXPECT_EQ(util::align(3, 8), 8);
+    EXPECT_EQ(util::align(9, 8), 16);
+    EXPECT_EQ(util::align(16, 8), 16);
+    EXPECT_EQ(util::align(17, 8), 24);
+    EXPECT_EQ(util::align(0, 8), 0);
 }
