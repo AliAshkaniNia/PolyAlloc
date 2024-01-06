@@ -15,6 +15,17 @@ namespace util
     {
         return (size + alignment - 1) & ~(alignment - 1);
     }
+    // Replicate the value of an unsigned char in a 32-bit hexadecimal number using bit-shifting.
+    constexpr auto create_unsigned_num(unsigned char num)-> uint32_t
+    {
+        uint32_t result = 0 ;
+        constexpr int bits_num = 32;
+        constexpr int bits_in_byte = 8 ; 
+        for(int i=0; i<bits_num; i+=bits_in_byte){
+            result |= (num << i);
+        }
+        return result;
+    }
 
     template <size_t X>
     void printArrayContents(std::string_view title,  std::array<std::byte, X>& data) {

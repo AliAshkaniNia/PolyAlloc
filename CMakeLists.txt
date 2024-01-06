@@ -8,6 +8,7 @@ add_executable(${EXEC_TARGET})
 target_sources(${EXEC_TARGET}
     PRIVATE
     main.cpp
+    src/monotonicMemoryResource.cpp
 )
 
 
