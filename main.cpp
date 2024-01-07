@@ -1,5 +1,6 @@
 #include "utility.h"
 #include "monotonicMemoryResource.h"
+#include "poolMemoryResource.h"
 #include <array>
 #include <iostream>
 #include <vector>
@@ -34,6 +35,35 @@ auto main()->int{
         }
 
         util::printArrayContents("After push back",buffer);
+    }
+    {
+        std::pmr::pool_options opts;
+        opts.max_blocks_per_chunk = 4; // Increase geometrically by this factor
+        opts.largest_required_pool_block = 64; // Largest block size to handle in pool
+        
+        constexpr int monotonic_buffer_size = 512;
+
+        std::array<std::byte, monotonic_buffer_size> buffer{};
+        MonotonicMemoryResource memory_resource(buffer.data(), monotonic_buffer_size, std::pmr::null_memory_resource());
+
+        std::cout<<"Pool usage \n";
+
+        // Create the pool resource with options and upstream resource
+        PoolMemoryResource pool(opts, &memory_resource);
+        util::printArrayContents("Before assignment",buffer);
+
+        constexpr int test_elements = 2;
+
+        std::pmr::vector<int> my_vector(test_elements, &pool);
+        for(int i=0;i<test_elements;i++){
+            my_vector[i]=util::create_unsigned_num(i+1);
+        }
+
+        std::pmr::vector<unsigned char> my_char_vector(test_elements, &pool);
+        for(int i=0;i<test_elements;i++){
+            my_char_vector[i]=i+1;
+        }
+        util::printArrayContents("After assignment",buffer);
     }
 
     return 0;

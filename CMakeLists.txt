@@ -9,6 +9,8 @@ target_sources(${EXEC_TARGET}
     PRIVATE
     main.cpp
     src/monotonicMemoryResource.cpp
+    src/pool.cpp
+    src/poolMemoryResource.cpp
 )
 
 
