@@ -17,8 +17,9 @@ enable_testing()
 
 add_executable(tests_monotonic monotonic_test.cpp ../src/monotonicMemoryResource.cpp )
 add_executable(tests_utility utility_test.cpp   )
+add_executable(tests_pool pool_test.cpp  ../src/poolMemoryResource.cpp ../src/pool.cpp ../src/monotonicMemoryResource.cpp)
 
-list( APPEND TEST_TARGETS tests_monotonic tests_utility )
+list( APPEND TEST_TARGETS tests_monotonic tests_utility tests_pool)
 
 include(GoogleTest)
 
