@@ -32,8 +32,8 @@ target_compile_options(${EXEC_TARGET} PRIVATE
 
 option(USE_ASAN "Use address sanitizers if available" ON)
 option(USE_UBSAN "Use undefined behavior sanitizer if available" ON)
-option(USE_CLANG_TIDY "Use clang-tidy if available" ON)
-option(USE_CPPCHECK "Use cppcheck if available" ON)
+option(USE_CLANG_TIDY "Use clang-tidy if available" OFF)
+option(USE_CPPCHECK "Use cppcheck if available" OFF)
 option(BUILD_TESTS "Build Tests" ON)
 
 if(USE_CLANG_TIDY)
@@ -42,9 +42,9 @@ if(USE_CLANG_TIDY)
         if(CLANGTIDY AND NOT (CLANGTIDY MATCHES "NOTFOUND"))
         message(STATUS "which clang-tidy: ${CLANGTIDY}")
 
-        # set_target_properties(${EXEC_TARGET} PROPERTIES
-                # CXX_CLANG_TIDY "${CLANGTIDY};-checks=modernize-*,readability-*,performance-*,bugprone-*,cppcoreguidelines-*,google-*,llvm-*,clang-analyzer-*"
-                # )
+        set_target_properties(${EXEC_TARGET} PROPERTIES
+                CXX_CLANG_TIDY "${CLANGTIDY};-checks=modernize-*,readability-*,performance-*,bugprone-*,cppcoreguidelines-*,google-*,llvm-*,clang-analyzer-*"
+                )
         endif()
 endif(USE_CLANG_TIDY)
 
@@ -59,9 +59,9 @@ if(USE_CPPCHECK)
                 ${CPPCHECK_SUPPRESS_LIST}
                 )
 
-        # set_target_properties(${EXEC_TARGET} PROPERTIES
-        #         CXX_CPPCHECK "${CPPCHECK_CMD}"
-        #         )
+        set_target_properties(${EXEC_TARGET} PROPERTIES
+                CXX_CPPCHECK "${CPPCHECK_CMD}"
+                )
         endif()
 endif(USE_CPPCHECK)
 
