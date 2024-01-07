@@ -2,7 +2,7 @@
 #include <memory_resource>
 #include <cassert>
 
-Pool::Pool(std::size_t blockSize, std::size_t maxChunkSize, std::pmr::memory_resource* upstream)
+memory::Pool::Pool(std::size_t blockSize, std::size_t maxChunkSize, std::pmr::memory_resource* upstream)
     : blockSize_(blockSize),
       currentChunkSize_(blockSize),
       maxChunkSize_(maxChunkSize),
@@ -15,7 +15,7 @@ Pool::Pool(std::size_t blockSize, std::size_t maxChunkSize, std::pmr::memory_res
 }
 
 // Move constructor
-Pool::Pool(Pool&& other) noexcept
+memory::Pool::Pool(Pool&& other) noexcept
     : blockSize_(other.blockSize_),
       currentChunkSize_(other.currentChunkSize_),
       maxChunkSize_(other.maxChunkSize_),
@@ -28,7 +28,7 @@ Pool::Pool(Pool&& other) noexcept
 }
 
 // Move assignment operator
-Pool& Pool::operator=(Pool&& other) noexcept {
+memory::Pool& memory::Pool::operator=(Pool&& other) noexcept {
     if (this != &other) {
         // Clean up current resources
         release();
@@ -47,17 +47,17 @@ Pool& Pool::operator=(Pool&& other) noexcept {
     return *this;
 }
 
-Pool::~Pool() {
+memory::Pool::~Pool() {
     release();
 }
 
-void Pool::release(){
+void memory::Pool::release(){
     for (auto chunk : chunks_) {
         upstreamResource_->deallocate(chunk, currentChunkSize_, alignof(std::max_align_t));
     }
 }
 
-void Pool::addChunk() {
+void memory::Pool::addChunk() {
     currentChunkSize_ = std::min(currentChunkSize_ * 2, maxChunkSize_);
     void* chunk = upstreamResource_->allocate(currentChunkSize_, alignof(std::max_align_t));
     chunks_.push_back(chunk);
@@ -73,7 +73,7 @@ void Pool::addChunk() {
     }
 }
 
-void* Pool::allocate(std::size_t size, std::size_t alignment) {
+void* memory::Pool::allocate(std::size_t size, std::size_t alignment) {
     (void)alignment;//suppressing warnings 
 
     assert(size <= blockSize_);
@@ -86,7 +86,7 @@ void* Pool::allocate(std::size_t size, std::size_t alignment) {
     return block;
 }
 
-void Pool::deallocate(void* p, std::size_t alignment) {
+void memory::Pool::deallocate(void* p, std::size_t alignment) {
     (void)alignment;//suppressing warnings 
     Block* block = static_cast<Block*>(p);
     block->next = freeListHead_;

@@ -8,10 +8,10 @@ protected:
 
     std::array<std::byte, buffer_size> buffer{};
 
-    MonotonicMemoryResource* memory_resource;
+    memory::MonotonicMemoryResource* memory_resource;
 
     void SetUp() override {
-        memory_resource = new MonotonicMemoryResource(buffer.data(), buffer_size, std::pmr::null_memory_resource());
+        memory_resource = new memory::MonotonicMemoryResource(buffer.data(), buffer_size, std::pmr::null_memory_resource());
     }
 
     void TearDown() override {

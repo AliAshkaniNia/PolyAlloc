@@ -5,7 +5,7 @@
 #include <cassert>
 #include <utility>
 
-PoolMemoryResource::PoolMemoryResource(const std::pmr::pool_options& opts, std::pmr::memory_resource* upstream)
+memory::PoolMemoryResource::PoolMemoryResource(const std::pmr::pool_options& opts, std::pmr::memory_resource* upstream)
     : upstreamResource_(upstream != nullptr ? upstream : std::pmr::get_default_resource()),
       largestBlockSize_(opts.largest_required_pool_block) {
     assert(upstreamResource_ != nullptr);
@@ -18,13 +18,13 @@ PoolMemoryResource::PoolMemoryResource(const std::pmr::pool_options& opts, std::
     }
 }
 
-PoolMemoryResource::PoolMemoryResource(PoolMemoryResource&& other) noexcept{
+memory::PoolMemoryResource::PoolMemoryResource(PoolMemoryResource&& other) noexcept{
     pools_ = std::move(other.pools_);
     upstreamResource_ = std::exchange(other.upstreamResource_, nullptr);
     largestBlockSize_ = std::exchange(other.largestBlockSize_, 0);
 }
 
-PoolMemoryResource& PoolMemoryResource::operator=(PoolMemoryResource&& other) noexcept{
+memory::PoolMemoryResource& memory::PoolMemoryResource::operator=(PoolMemoryResource&& other) noexcept{
     if (this != &other) {
         pools_ = std::move(other.pools_);
         upstreamResource_ = std::exchange(other.upstreamResource_, nullptr);
@@ -33,9 +33,9 @@ PoolMemoryResource& PoolMemoryResource::operator=(PoolMemoryResource&& other) no
     return *this;
 }
 
-auto PoolMemoryResource::do_allocate(std::size_t bytes, std::size_t alignment) -> void*{
+auto memory::PoolMemoryResource::do_allocate(std::size_t bytes, std::size_t alignment) -> void*{
     bytes = util::align(bytes, alignment);
-    auto pool = std::lower_bound(pools_.begin(), pools_.end(), bytes, [](const Pool& p, std::size_t size) {
+    auto pool = std::lower_bound(pools_.begin(), pools_.end(), bytes, [](const memory::Pool& p, std::size_t size) {
             return p.getBlockSize() < size;
         });
 
@@ -46,9 +46,9 @@ auto PoolMemoryResource::do_allocate(std::size_t bytes, std::size_t alignment) -
     return pool->allocate(bytes, alignment);
 }
 
-void PoolMemoryResource::do_deallocate(void* p, std::size_t bytes, std::size_t alignment) {
+void memory::PoolMemoryResource::do_deallocate(void* p, std::size_t bytes, std::size_t alignment) {
     bytes = util::align(bytes, alignment);
-    auto pool = std::lower_bound(pools_.begin(), pools_.end(), bytes, [](const Pool& p, std::size_t size) {
+    auto pool = std::lower_bound(pools_.begin(), pools_.end(), bytes, [](const memory::Pool& p, std::size_t size) {
             return p.getBlockSize() < size;
         });
 
@@ -59,7 +59,7 @@ void PoolMemoryResource::do_deallocate(void* p, std::size_t bytes, std::size_t a
     pool->deallocate(p, alignment);
 }
 
-auto PoolMemoryResource::do_is_equal(const std::pmr::memory_resource& other) const noexcept -> bool {
+auto memory::PoolMemoryResource::do_is_equal(const std::pmr::memory_resource& other) const noexcept -> bool {
     return this == &other;
 }
 
