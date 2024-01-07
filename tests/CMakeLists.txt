@@ -15,7 +15,7 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(tests_monotonic monotonic_test.cpp  )
+add_executable(tests_monotonic monotonic_test.cpp ../src/monotonicMemoryResource.cpp )
 add_executable(tests_utility utility_test.cpp   )
 
 list( APPEND TEST_TARGETS tests_monotonic tests_utility )
